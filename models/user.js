@@ -10,10 +10,20 @@ var userSchema = new Schema({
         type: String,
         require: true
     },
-    phoneNumber: {
+    fullname:{
+        type: String,
+        require: true
+    }, 
+    phoneNo: {
         type: Number,
-        required: true
-    }
+        require: true
+    },
+    // fullname alanı
+    role: String, // role alanı
+    userId:{
+        type: Number,
+        require: true
+    }, 
 })
 
 userSchema.pre('save', function (next) {

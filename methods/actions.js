@@ -4,21 +4,24 @@ var config = require('../config/dbconfig')
 
 var functions = {
     addNew: function (req, res) {
-        if ((!req.body.email) || (!req.body.password)) {
-            res.json({success: false, msg: 'Enter all fields'})
+        if ((!req.body.email) || (!req.body.password) || (!req.body.phoneNo) || (!req.body.fullname) || (!req.body.userId)) {
+            res.json({success: false, msg: 'Enter all required fields'})
         }
         else {
             var newUser = User({
                 email: req.body.email,
                 password: req.body.password,
-                phoneNo : req.body.phoneNo
+                fullname: req.body.fullname, // fullname alanını al
+                phoneNo: req.body.phoneNo,
+                role: req.body.role, // role alanını al
+                userId: req.body.userId 
             });
             newUser.save()
                 .then(savedUser => {
-                    res.json({success: true, msg: 'Successfully saved'})
+                    res.json({success: true, msg: 'User successfully saved'})
                 })
                 .catch(err => {
-                    res.json({success: false, msg: 'Failed to save'})
+                    res.json({success: false, msg: 'Failed to save user'})
                 });
         }
     },
@@ -48,7 +51,7 @@ var functions = {
         if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
             var token = req.headers.authorization.split(' ')[1]
             var decodedtoken = jwt.decode(token, config.secret)
-            return res.json({success: true, msg: 'Hello ' + decodedtoken.name})
+            return res.json({success: true, msg: 'Hello ' + decodedtoken.userId})
         }
         else {
             return res.json({success: false, msg: 'No Headers'})

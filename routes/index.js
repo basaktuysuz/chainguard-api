@@ -1,22 +1,28 @@
-const functions = require('firebase-functions');
-const express = require('express');
-const actions = require('../methods/actions');
+const express = require('express')
+const actions = require('../methods/actions')
+const router = express.Router()
 
-const app = express();
+router.get('/', (req, res) => {
+    res.send('Hellxxo World')
+})
 
-app.use(express.json());
+router.get('/dashboard', (req, res) => {
+    res.send('Dashboard')
+})
 
-app.get('/', (req, res) => {
-    res.send('Hello World');
-});
+//@desc Adding new user
+//@route POST /adduser
+router.post('/adduser', actions.addNew)
 
-app.get('/404', (req, res) => {
-    res.send('Dashboard');
-});
+//@desc Authenticate a user
+//@route POST /authenticate
+router.post('/authenticate', actions.authenticate)
 
-app.post('/adduser', actions.addNew);
-app.post('/authenticate', actions.authenticate);
-app.get('/getinfo', actions.getinfo);
+//@desc Get info on a user
+//@route GET /getinfo
+router.get('/getinfo', actions.getinfo)
 
-// Export the Express app as a Firebase Function
-exports.api = functions.https.onRequest(app);
+
+
+
+module.exports = router
