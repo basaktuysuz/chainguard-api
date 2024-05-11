@@ -5,6 +5,7 @@ const connectDB = require('./config/db')
 const passport = require('passport')
 const bodyParser = require('body-parser')
 const routes = require('./routes/index')
+const user = require('./models/user')
 
 connectDB()
 
@@ -19,7 +20,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(routes)
 app.use(passport.initialize())
-
+app.get('/getusers', (req,res)=>{
+    user.find().then(user=> res.json(user)).catch(err => res.json(err))
+})
 
 const PORT = process.env.PORT || 3000
 

@@ -48,15 +48,30 @@ var functions = {
             });
     },
     getinfo: function (req, res) {
-        if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
-            var token = req.headers.authorization.split(' ')[1]
-            var decodedtoken = jwt.decode(token, config.secret)
-            return res.json({success: true, msg: 'Hello ' + decodedtoken.userId})
+        try {
+            const allUser= User.find({}).lean();
+            res.send({status : "ok", data : allUser});
+        } catch (error) {
+            console.log(error);
         }
-        else {
-            return res.json({success: false, msg: 'No Headers'})
-        }
-    }
+    },
+    fetchdata: function(req, res, next) {
+        var resultArray = [];
+        mongo.connect(url, function(err, db){
+          assert.equal(null, err);
+          var cursor = db.collection('users').find();
+          cursor.forEach(function(doc, err){
+            assert.equal(null, err);
+            resultArray.push(doc);
+          }, function(){
+            db.close();
+            //I have no index file to render, so I print the result to console
+            //Also send back the JSON string bare through the channel
+            console.log(resultArray);
+            res.send(resultArray);
+          });
+        });
+      }
 }
 
 module.exports = functions
