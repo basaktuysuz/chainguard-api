@@ -24,5 +24,4 @@ router.get('/getinfo', actions.getinfo)
 
 
 
-
 module.exports = router

@@ -49,10 +49,30 @@ var functions = {
     },
     getinfo: function (req, res) {
         try {
-            const allUser= User.find({}).lean();
-            res.send({status : "ok", data : allUser});
+            const token = req.headers.authorization.split(' ')[1]; // Extract token from authorization header
+    
+            // Decode the token to get user information
+            const decoded = jwt.decode(token, config.secret);
+    
+            const userId = decoded._id; // Assuming user ID is stored in the JWT payload
+    
+            // Retrieve the logged-in user's information based on the user ID
+            User.findById(userId).exec((err, user) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(500).send({ status: "error", message: "Internal Server Error" });
+                }
+    
+                if (!user) {
+                    return res.status(404).send({ status: "error", message: "User not found" });
+                }
+    
+                // If user found, send the user's information
+                res.send({ status: "ok", data: user });
+            });
         } catch (error) {
             console.log(error);
+            res.status(401).send({ status: "error", message: "Unauthorized" });
         }
     },
     fetchdata: function(req, res, next) {
